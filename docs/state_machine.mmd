@@ -1,0 +1,51 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	parse_jd(parse_jd)
+	extract_requirements(extract_requirements)
+	search_resumes(search_resumes)
+	generate_report(generate_report)
+	human_feedback(human_feedback)
+	understand_request(understand_request)
+	refine_requirements(refine_requirements)
+	compare_candidates(compare_candidates)
+	explain_ranking(explain_ranking)
+	interview_questions(interview_questions)
+	answer_question(answer_question)
+	finish(finish)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> parse_jd;
+	answer_question --> human_feedback;
+	compare_candidates --> human_feedback;
+	explain_ranking --> human_feedback;
+	extract_requirements --> search_resumes;
+	generate_report --> human_feedback;
+	human_feedback --> understand_request;
+	interview_questions --> human_feedback;
+	parse_jd -. &nbsp;hiring_request&nbsp; .-> extract_requirements;
+	parse_jd -. &nbsp;not_a_hiring_request&nbsp; .-> human_feedback;
+	rank_candidates\3around3_final_decision --> generate_report;
+	refine_requirements --> search_resumes;
+	search_resumes --> rank_candidates\3around1_screen;
+	understand_request -. &nbsp;question&nbsp; .-> answer_question;
+	understand_request -. &nbsp;compare&nbsp; .-> compare_candidates;
+	understand_request -.-> explain_ranking;
+	understand_request -. &nbsp;end&nbsp; .-> finish;
+	understand_request -.-> interview_questions;
+	understand_request -. &nbsp;new_search&nbsp; .-> parse_jd;
+	understand_request -.-> refine_requirements;
+	finish --> __end__;
+	subgraph rank_candidates
+	rank_candidates\3around1_screen(round1_screen)
+	rank_candidates\3around2_deep_analysis(round2_deep_analysis)
+	rank_candidates\3around3_final_decision(round3_final_decision)
+	rank_candidates\3around1_screen --> rank_candidates\3around2_deep_analysis;
+	rank_candidates\3around2_deep_analysis --> rank_candidates\3around3_final_decision;
+	end
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

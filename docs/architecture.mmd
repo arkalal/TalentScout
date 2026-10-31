@@ -1,0 +1,32 @@
+flowchart TD
+    START([START]) --> PJ[Parse JD<br/><i>role, seniority, domain</i>]
+    PJ -- hiring request --> ER[Extract Requirements<br/><i>must-have vs nice-to-have</i>]
+    PJ -- not a hiring request --> HF
+    ER --> SR[Search Resumes<br/><i>RAG: MiniLM + FAISS over 100 resumes</i>]
+    SR --> R1
+    subgraph RANK [Rank Candidates · multi-round screening]
+        R1[Round 1 · Screen<br/><i>100 → top 10, deterministic score</i>] --> R2[Round 2 · Deep analysis<br/><i>LLM review of 10 resumes</i>]
+        R2 --> R3[Round 3 · Decision<br/><i>HIRE / BORDERLINE / NO HIRE</i>]
+    end
+    R3 --> GR[Generate Report<br/><i>strengths, gaps, suggestions</i>]
+    GR --> HF{{Human Feedback<br/><i>interrupt · recruiter message</i>}}
+    HF --> UR[Understand Request<br/><i>LLM intent router</i>]
+    UR -- refine requirements --> RR[Refine Requirements<br/><i>diff + history</i>]
+    RR -- re-rank --> SR
+    UR -- new search --> PJ
+    UR -- compare --> CC[compare_candidates]
+    UR -- explain ranking --> EX[Explain Ranking<br/><i>score breakdown</i>]
+    UR -- interview questions --> IQ[generate_interview_questions]
+    UR -- other question --> QA[Answer Question<br/><i>ReAct: FS + RAG + agent tools</i>]
+    CC --> HF
+    EX --> HF
+    IQ --> HF
+    QA --> HF
+    UR -- done --> FIN[Finish] --> END([END])
+
+    classDef pipe fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    classDef act fill:#ecfdf5,stroke:#10b981,color:#064e3b
+    classDef human fill:#fff7ed,stroke:#f97316,color:#7c2d12
+    class PJ,ER,SR,R1,R2,R3,GR pipe
+    class RR,CC,EX,IQ,QA,FIN act
+    class HF,UR human
